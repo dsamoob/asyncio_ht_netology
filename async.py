@@ -1,11 +1,13 @@
 import asyncio, time
+import aiohttp
+
 from aiohttp import ClientSession
 from more_itertools import chunked
 from db import Person, Session, engine, Base
 from pprint import pprint
 CHUNK_SIZE = 10
 
-
+#
 # async def get_sp(url_sp):
 #     session = aiohttp.ClientSession()
 #     response = await session.get(url_sp, ssl=False)
