@@ -74,6 +74,8 @@ async def get_people(people_id, ClientSession, sep_dict):
     print(f'get people start {people_id}')
     async with ClientSession as session:
         response = await session.get(f'https://swapi.dev/api/people/{people_id}', ssl=False)
+        # если убрать ssl=False выдает:
+        # aiohttp.client_exceptions.ClientConnectorCertificateError: Cannot connect to host swapi.dev:443 ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:992)')]
         response_json = await response.json()
 
         try:
