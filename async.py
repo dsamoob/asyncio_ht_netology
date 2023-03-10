@@ -125,7 +125,6 @@ async def main():
         await task
 
 
-
 start = time.monotonic()
 asyncio.run(main())
 print(f'total time spent: {time.monotonic() - start}')
