@@ -1,5 +1,4 @@
 import asyncio, time
-import aiohttp
 
 from aiohttp import ClientSession
 from more_itertools import chunked
@@ -9,35 +8,35 @@ CHUNK_SIZE = 10
 
 #
 # async def get_sp(url_sp):
-#     session = aiohttp.ClientSession()
+#     session = ClientSession()
 #     response = await session.get(url_sp, ssl=False)
 #     response_json = await response.json()
 #     await session.close()
 #     return response_json['name']
 #
 # async def get_vehicle(veh_url):
-#     session = aiohttp.ClientSession()
+#     session = ClientSession()
 #     response = await session.get(veh_url, ssl=False)
 #     response_json = await response.json()
 #     await session.close()
 #     return response_json['name']
 #
 # async def get_starships(ship_url):
-#     session = aiohttp.ClientSession()
+#     session = ClientSession()
 #     response = await session.get(ship_url, ssl=False)
 #     response_json = await response.json()
 #     await session.close()
 #     return response_json['name']
 #
 # async def get_films(film_url):
-#     session = aiohttp.ClientSession()
+#     session = ClientSession()
 #     response = await session.get(film_url, ssl=False)
 #     response_json = await response.json()
 #     await session.close()
 #     return response_json['title']
 #
 # async def get_people(people_id):
-#     session = aiohttp.ClientSession()
+#     session = ClientSession()
 #     response = await session.get(f'https://swapi.dev/api/people/{people_id}', ssl=False)
 #     response_json = await response.json()
 #     await session.close()
@@ -118,8 +117,11 @@ async def main():
     sep_dict = {'species': 'name', 'films': 'title', 'starships': 'name', 'vehicles': 'name'}
     coro = (get_people(i, ClientSession(), sep_dict) for i in range(1, 84))
     for coros_chunk in chunked(coro, CHUNK_SIZE):
-        result = await asyncio.gather(*coros_chunk)
-        await insert_people(result)
+        asyncio.create_task(insert_people(await asyncio.gather(*coros_chunk)))
+    tasks = set(asyncio.all_tasks()) - {asyncio.current_task()}
+    for task in tasks:
+        await task
+
 
 
 start = time.monotonic()
